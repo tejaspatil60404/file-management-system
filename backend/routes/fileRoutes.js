@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const { uploadFile } = require('../controllers/fileController');
+const { uploadFile, getAllFiles } = require('../controllers/fileController');
 
 // Configure Multer to save files to /uploads
 const storage = multer.diskStorage({
@@ -26,5 +26,8 @@ router.get('/', (req, res) => {
 
 // Upload route
 router.post('/upload', upload.single('file'), uploadFile);
+
+// Import the controller function to get all files
+router.get('/list', getAllFiles);  // 👈 New route to list all files
 
 module.exports = router;
