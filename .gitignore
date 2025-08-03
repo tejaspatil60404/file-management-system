@@ -1,0 +1,12 @@
+# Dependencies
+/frontend/node_modules
+/backend/node_modules
+
+# Environment variables (IMPORTANT)
+/frontend/.env
+/backend/.env
+
+# Build files & logs
+/frontend/build
+.DS_Store
+npm-debug.log
