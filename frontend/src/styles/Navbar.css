@@ -1,0 +1,75 @@
+
+/* ==========================================================================
+   File: /frontend/src/components/Navbar.css (or /styles/Navbar.css)
+   ========================================================================== */
+
+.navbar {
+  background: #333;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between; /* This pushes logo to left and menu to right */
+  align-items: center; /* This vertically centers items */
+  height: 80px;
+  width: 100%;
+  max-width: 1500px;
+  padding: 0 50px;
+}
+
+.navbar-logo {
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  text-align: center;
+}
+
+.nav-item {
+  height: 80px;
+  display: flex; /* Helps with vertical alignment of links */
+  align-items: center;
+}
+
+.nav-links {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease-out;
+}
+
+.nav-links:hover {
+  color: #f0ad4e;
+}
+
+.nav-links-btn {
+  background: #f0ad4e;
+  color: #333;
+  padding: 8px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-left: 1rem; /* Adds space between buttons and regular links */
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.nav-links-btn:hover {
+    background: #fff;
+    color: #333;
+}

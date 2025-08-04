@@ -1,41 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+// frontend/src/App.js (Updated)
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import './styles/App.css'; // Assuming you have a global css file
 
 function App() {
-  // State to store the message we get from the backend
-  const [message, setMessage] = useState('Connecting to backend...');
-
-  // useEffect hook to fetch data from the backend when the component mounts
-  useEffect(() => {
-    // The 'proxy' setting in package.json forwards this to http://localhost:5000/api
-    fetch('/api')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Update the state with the message from the backend
-        setMessage(data.message);
-      })
-      .catch(error => {
-        console.error('Error fetching data from backend:', error);
-        setMessage('Could not connect to backend. Is the backend server running?');
-      });
-  }, []); // The empty array [] means this effect runs only once
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Web App</h1>
-        <p style={{ marginTop: '40px', border: '1px solid white', padding: '10px' }}>
-          <strong>Status:</strong> {message}
-        </p>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <main className="container">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
 export default App;
-
