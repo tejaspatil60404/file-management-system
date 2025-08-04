@@ -28,7 +28,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ISKCON Temple Web App</h1>
+        <h1>Web App</h1>
         <p style={{ marginTop: '40px', border: '1px solid white', padding: '10px' }}>
           <strong>Status:</strong> {message}
         </p>

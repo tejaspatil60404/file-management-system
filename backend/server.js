@@ -1,30 +1,31 @@
 // backend/server.js
 
 const express = require('express');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const { connectDB } = require('./src/config/db'); // Import the new DB connection function
 
 // Load environment variables from .env file
 dotenv.config();
+
+// Import routes
+const authRoutes = require('./src/routes/authRoutes');
 
 // Initialize the Express app
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(express.json()); // To parse JSON bodies from incoming requests
+app.use(cors());
+app.use(express.json());
 
 // --- Database Connection ---
-// We will add the connection logic here once you have your MongoDB Atlas URI
-// const dbURI = process.env.MONGODB_URI;
-// mongoose.connect(dbURI)...
+connectDB();
 
-// --- Routes ---
-// A simple test route to check if the server is running
-app.get('/api', (req, res) => {
-  res.json({ message: 'Hello from the ISKCON Backend!' });
-});
+// --- API Routes ---
+// Use the authentication routes
+// All routes in authRoutes.js will be prefixed with /api/auth
+app.use('/api/auth', authRoutes);
+
 
 // --- Server Startup ---
 const PORT = process.env.PORT || 5000;
