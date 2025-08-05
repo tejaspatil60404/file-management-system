@@ -6,7 +6,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import './styles/App.css'; // Assuming you have a global css file
+import './App.css'; // Assuming you have a global css file
 
 function App() {
   return (
