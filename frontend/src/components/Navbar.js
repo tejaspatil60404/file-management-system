@@ -26,41 +26,42 @@ const Navbar = () => {
     { text: 'Home', path: '/' },
     { text: 'Events', path: '/events' },
     { text: 'Gallery', path: '/gallery' },
+    { text: 'Sunday School', path: '/sunday-school' }, // <-- Add the new nav item
   ];
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 0 }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
         ISKCON Temple
       </Typography>
       <Divider />
       <List>
         {navItems.map((item) => (
           <ListItem key={item.text} component={RouterLink} to={item.path} disablePadding>
-            <ListItemText primary={item.text} sx={{ textAlign: 'center' }} />
+            <ListItemText primary={item.text} sx={{ textAlign: 'center' }}/>
           </ListItem>
         ))}
         <Divider />
         {user ? (
-          <Box>
-            {user.role === 'admin' && (
-              <ListItem component={RouterLink} to="/admin" disablePadding>
-                <ListItemText primary="Admin" sx={{ textAlign: 'center' }} />
-              </ListItem>
-            )}
-            <ListItem onClick={handleLogout} button>
-              <ListItemText primary="Logout" sx={{ textAlign: 'center' }} />
-            </ListItem>
-          </Box>
+            <Box>
+                {user.role === 'admin' && (
+                    <ListItem component={RouterLink} to="/admin" disablePadding>
+                        <ListItemText primary="Admin" sx={{ textAlign: 'center' }}/>
+                    </ListItem>
+                )}
+                <ListItem onClick={handleLogout} button>
+                    <ListItemText primary="Logout" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+            </Box>
         ) : (
-          <Box>
-            <ListItem component={RouterLink} to="/login" disablePadding>
-              <ListItemText primary="Login" sx={{ textAlign: 'center' }} />
-            </ListItem>
-            <ListItem component={RouterLink} to="/register" disablePadding>
-              <ListItemText primary="Register" sx={{ textAlign: 'center' }} />
-            </ListItem>
-          </Box>
+            <Box>
+                <ListItem component={RouterLink} to="/login" disablePadding>
+                    <ListItemText primary="Login" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+                <ListItem component={RouterLink} to="/register" disablePadding>
+                    <ListItemText primary="Register" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+            </Box>
         )}
       </List>
     </Box>
@@ -83,36 +84,36 @@ const Navbar = () => {
             variant="h6"
             component={RouterLink}
             to="/"
-            sx={{ color: 'inherit', textDecoration: 'none' }} // <-- Removed flexGrow: 1
+            sx={{ color: 'inherit', textDecoration: 'none' }}
           >
             ISKCON Temple
           </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'block' }, marginLeft: 'auto' }}> {/* <-- Added marginLeft: 'auto' */}
+          <Box sx={{ display: { xs: 'none', sm: 'block' }, marginLeft: 'auto' }}>
             {navItems.map((item) => (
               <Button key={item.text} component={RouterLink} to={item.path} sx={{ color: '#fff' }}>
                 {item.text}
               </Button>
             ))}
             {user ? (
-              <>
-                {user.role === 'admin' && (
-                  <Button component={RouterLink} to="/admin" sx={{ color: '#fff' }}>
-                    Admin
-                  </Button>
-                )}
-                <Button onClick={handleLogout} color="inherit">
-                  Logout
-                </Button>
-              </>
+                <>
+                    {user.role === 'admin' && (
+                        <Button component={RouterLink} to="/admin" sx={{ color: '#fff' }}>
+                            Admin
+                        </Button>
+                    )}
+                    <Button onClick={handleLogout} color="inherit">
+                        Logout
+                    </Button>
+                </>
             ) : (
-              <>
-                <Button component={RouterLink} to="/login" color="inherit">
-                  Login
-                </Button>
-                <Button component={RouterLink} to="/register" color="inherit">
-                  Register
-                </Button>
-              </>
+                <>
+                    <Button component={RouterLink} to="/login" color="inherit">
+                        Login
+                    </Button>
+                    <Button component={RouterLink} to="/register" color="inherit">
+                        Register
+                    </Button>
+                </>
             )}
           </Box>
         </Toolbar>
@@ -133,10 +134,6 @@ const Navbar = () => {
           {drawer}
         </Drawer>
       </nav>
-      {/* This Box is a spacer to push content below the AppBar */}
-      <Box component="main" sx={{ p: 3 }}>
-        <Toolbar />
-      </Box>
     </Box>
   );
 };
