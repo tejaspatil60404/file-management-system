@@ -10,3 +10,5 @@
 /frontend/build
 .DS_Store
 npm-debug.log
+
+/backend/uploads

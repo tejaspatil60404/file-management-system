@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Create a new Sequelize instance to connect to the database
+// Create and export the Sequelize instance directly
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -16,19 +16,4 @@ const sequelize = new Sequelize(
   }
 );
 
-// Test the database connection
-const connectDB = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('MySQL Connection has been established successfully.');
-    // Sync all defined models to the DB.
-    // This creates the tables if they don't exist.
-    await sequelize.sync(); 
-    console.log("All models were synchronized successfully.");
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-    process.exit(1);
-  }
-};
-
-module.exports = { sequelize, connectDB };
+module.exports = sequelize;

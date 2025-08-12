@@ -1,10 +1,9 @@
 // backend/src/models/userModel.js
 
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db'); // Import the sequelize instance
+const sequelize = require('../config/db');
 const bcrypt = require('bcryptjs');
 
-// Define the User model/table
 const User = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,
@@ -27,13 +26,11 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: 'user',
     validate: {
-      isIn: [['user', 'admin']],
+      isIn: [['user', 'counsellor', 'admin']],
     },
   },
 });
 
-// Sequelize Hook: This runs before a new user is created
-// It automatically hashes the password.
 User.beforeCreate(async (user, options) => {
   if (user.password) {
     const salt = await bcrypt.genSalt(12);
