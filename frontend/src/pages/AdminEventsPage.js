@@ -1,4 +1,4 @@
-// frontend/src/pages/AdminEventsPage.js
+// frontend/src/pages/AdminEventsPage.js (Updated)
 
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Button, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, CircularProgress, Alert } from '@mui/material';
@@ -6,6 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import eventService from '../services/eventService';
+import uploadService from '../services/uploadService';
 import EventFormModal from '../components/EventFormModal';
 
 const AdminEventsPage = () => {
@@ -13,7 +14,7 @@ const AdminEventsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentEvent, setCurrentEvent] = useState(null); // For editing
+  const [currentEvent, setCurrentEvent] = useState(null);
 
   const fetchEvents = async () => {
     try {
@@ -43,17 +44,16 @@ const AdminEventsPage = () => {
   };
 
   const handleSaveEvent = async (eventData) => {
-    // This is where the upload logic will go in Phase 4.
-    // For now, we just log the file to the console if it exists.
-    if (eventData.selectedFile) {
-      console.log('File to upload:', eventData.selectedFile);
-      // In the future, you'll upload the file here and get back a URL.
-      // Then you'll save that URL in eventData.image before saving the event.
-    }
-    
     try {
-      // We remove the temporary 'selectedFile' before sending to backend
+      let imageUrl = eventData.image;
+
+      if (eventData.selectedFile) {
+        const uploadRes = await uploadService.uploadFile(eventData.selectedFile);
+        imageUrl = uploadRes.data.filePath;
+      }
+      
       const { selectedFile, ...dataToSave } = eventData;
+      dataToSave.image = imageUrl;
 
       if (dataToSave.id) {
         await eventService.updateEvent(dataToSave.id, dataToSave);
@@ -64,6 +64,7 @@ const AdminEventsPage = () => {
       handleCloseModal();
     } catch (err) {
       setError('Failed to save event.');
+      console.error(err);
     }
   };
 
@@ -84,11 +85,7 @@ const AdminEventsPage = () => {
         <Typography variant="h4" component="h1" fontWeight="bold">
           Manage Events
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenModal()}
-        >
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpenModal()}>
           Add New Event
         </Button>
       </Box>

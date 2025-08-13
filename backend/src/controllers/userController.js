@@ -7,11 +7,25 @@ const User = require('../models/userModel');
 // @access  Private/Admin
 const getUsers = async (req, res) => {
   try {
-    // Find all users, excluding their passwords from the result
     const users = await User.findAll({
       attributes: { exclude: ['password'] }
     });
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Get all users with the role of 'counsellor'
+// @route   GET /api/users/counsellors
+// @access  Private/Admin
+const getCounsellors = async (req, res) => {
+  try {
+    const counsellors = await User.findAll({
+      where: { role: 'counsellor' },
+      attributes: ['id', 'username'], // Only send necessary info
+    });
+    res.json(counsellors);
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
@@ -26,7 +40,6 @@ const updateUserRole = async (req, res) => {
     const user = await User.findByPk(req.params.id);
 
     if (user) {
-      // Check if the provided role is valid
       if (['user', 'counsellor', 'admin'].includes(role)) {
         user.role = role;
         await user.save();
@@ -44,5 +57,6 @@ const updateUserRole = async (req, res) => {
 
 module.exports = {
   getUsers,
+  getCounsellors,
   updateUserRole,
 };

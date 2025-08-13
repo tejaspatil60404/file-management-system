@@ -10,18 +10,45 @@ const SadhanaRecord = require('../models/sadhanaRecordModel');
 const assignCounsellor = async (req, res) => {
   try {
     const { userId, counsellorId } = req.body;
-    const [assignment, created] = await CounsellorAssignment.findOrCreate({
-      where: { userId: userId },
-      defaults: { counsellorId: counsellorId },
-    });
 
-    if (!created) {
+    // Validate input
+    if (!userId || !counsellorId) {
+        return res.status(400).json({ message: 'User ID and Counsellor ID are required.' });
+    }
+
+    // --- ADDED VALIDATION ---
+    // Ensure both the user and the counsellor actually exist before creating an assignment
+    const userToAssign = await User.findByPk(userId);
+    const counsellor = await User.findOne({ where: { id: counsellorId, role: 'counsellor' } });
+
+    if (!userToAssign) {
+        return res.status(404).json({ message: `User with ID ${userId} not found.` });
+    }
+    if (!counsellor) {
+        return res.status(404).json({ message: `Counsellor with ID ${counsellorId} not found or is not a counsellor.` });
+    }
+    // --- END OF VALIDATION ---
+
+
+    // Check if an assignment already exists for this user
+    let assignment = await CounsellorAssignment.findOne({ where: { userId: userId } });
+
+    if (assignment) {
+      // If it exists, update the counsellor
       assignment.counsellorId = counsellorId;
       await assignment.save();
-      return res.json({ message: 'Counsellor assignment updated successfully.', assignment });
+      res.json({ message: 'Counsellor assignment updated successfully.', assignment });
+    } else {
+      // If it does not exist, create a new one
+      assignment = await CounsellorAssignment.create({
+        userId: userId,
+        counsellorId: counsellorId,
+      });
+      res.status(201).json({ message: 'User assigned to counsellor successfully.', assignment });
     }
-    res.status(201).json({ message: 'User assigned to counsellor successfully.', assignment });
   } catch (error) {
+    // This will log the detailed error to your backend terminal
+    console.error('Error in assignCounsellor:', error); 
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
@@ -46,7 +73,6 @@ const getAssignedUsers = async (req, res) => {
 // @access  Private/Counsellor
 const getSadhanaRecordsForUser = async (req, res) => {
   try {
-    // TODO: Add validation to ensure the counsellor is assigned to this user.
     const records = await SadhanaRecord.findAll({
       where: { userId: req.params.userId },
       order: [['recordDate', 'DESC']],

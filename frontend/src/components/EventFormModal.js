@@ -1,9 +1,8 @@
-// frontend/src/components/EventFormModal.js
+// frontend/src/components/EventFormModal.js (Updated)
 
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 
-// Style for the modal
 const style = {
   position: 'absolute',
   top: '50%',
@@ -21,8 +20,8 @@ const EventFormModal = ({ open, handleClose, event, onSave }) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
-  const [image, setImage] = useState(''); // To hold the image URL
-  const [selectedFile, setSelectedFile] = useState(null); // To hold the selected file object
+  const [image, setImage] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     if (event) {
@@ -30,10 +29,9 @@ const EventFormModal = ({ open, handleClose, event, onSave }) => {
       setDescription(event.description);
       setDate(event.date ? new Date(event.date).toISOString().slice(0, 16) : '');
       setLocation(event.location);
-      setImage(event.image || ''); // Populate existing image URL
-      setSelectedFile(null); // Clear any selected file
+      setImage(event.image || '');
+      setSelectedFile(null);
     } else {
-      // If it's a new event, clear the form
       setTitle('');
       setDescription('');
       setDate('');
@@ -56,13 +54,9 @@ const EventFormModal = ({ open, handleClose, event, onSave }) => {
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="event-form-modal-title"
-    >
+    <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
-        <Typography id="event-form-modal-title" variant="h6" component="h2">
+        <Typography variant="h6" component="h2">
           {event ? 'Edit Event' : 'Add New Event'}
         </Typography>
         <TextField margin="normal" fullWidth label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -78,24 +72,12 @@ const EventFormModal = ({ open, handleClose, event, onSave }) => {
         />
         <TextField margin="normal" fullWidth label="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
         
-        {/* New Fields for Image Upload */}
         <TextField margin="normal" fullWidth label="Image URL" value={image} onChange={(e) => setImage(e.target.value)} helperText="Enter an image URL or upload a new file below."/>
-        <Button
-          variant="outlined"
-          component="label"
-          fullWidth
-          sx={{ mt: 1 }}
-        >
+        <Button variant="outlined" component="label" fullWidth sx={{ mt: 1 }}>
           Upload New Image
-          <input
-            type="file"
-            hidden
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <input type="file" hidden accept="image/*" onChange={handleFileChange} />
         </Button>
         {selectedFile && <Typography sx={{mt: 1, fontSize: '0.8rem'}}>Selected: {selectedFile.name}</Typography>}
-
 
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button onClick={handleClose} sx={{ mr: 1 }}>Cancel</Button>
