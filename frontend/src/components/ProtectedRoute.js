@@ -4,7 +4,8 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 
-const ProtectedRoute = ({ adminOnly = false }) => {
+// The component now accepts an array of allowed roles
+const ProtectedRoute = ({ allowedRoles }) => {
   const { user } = useAuth();
 
   // 1. Check if the user is logged in
@@ -13,9 +14,10 @@ const ProtectedRoute = ({ adminOnly = false }) => {
     return <Navigate to="/login" />;
   }
 
-  // 2. Check if the route is for admins only and if the user is an admin
-  if (adminOnly && user.role !== 'admin') {
-    // If user is not an admin, redirect to the homepage (or an unauthorized page)
+  // 2. Check if the user's role is in the list of allowed roles
+  // If allowedRoles is not provided, just being logged in is enough
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    // If user's role is not permitted, redirect to the homepage
     return <Navigate to="/" />;
   }
 

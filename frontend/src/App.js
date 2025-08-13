@@ -16,6 +16,7 @@ import AdminEventsPage from './pages/AdminEventsPage';
 import AdminDocumentsPage from './pages/AdminDocumentsPage';
 import AdminUsersPage from './pages/AdminUsersPage'; // <-- Import the new page
 import { Box } from '@mui/material';
+import CounsellorDashboard from './pages/CounsellorDashboard'; // <-- Import the counsellor dashboard
 
 function App() {
   return (
@@ -33,6 +34,11 @@ function App() {
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/sunday-school" element={<SundaySchoolPage />} />
 
+            {/* Counsellor & Admin Routes */}
+            <Route element={<ProtectedRoute allowedRoles={['counsellor', 'admin']} />}>
+              <Route path="/counsellor" element={<CounsellorDashboard />} />
+            </Route>
+
             {/* Admin-Only Routes */}
             <Route element={<ProtectedRoute adminOnly={true} />}>
               <Route path="/admin" element={<AdminDashboard />} />
@@ -48,3 +54,4 @@ function App() {
 }
 
 export default App;
+

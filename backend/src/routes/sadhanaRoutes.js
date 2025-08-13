@@ -2,7 +2,12 @@
 
 const express = require('express');
 const router = express.Router();
-const { assignCounsellor, getAssignedUsers, addSadhanaRecord } = require('../controllers/sadhanaController');
+const { 
+    assignCounsellor, 
+    getAssignedUsers, 
+    addSadhanaRecord,
+    getSadhanaRecordsForUser
+} = require('../controllers/sadhanaController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // Middleware to check for counsellor role
@@ -20,5 +25,6 @@ router.post('/assign', protect, admin, assignCounsellor);
 // Counsellor routes
 router.get('/my-users', protect, counsellor, getAssignedUsers);
 router.post('/records', protect, counsellor, addSadhanaRecord);
+router.get('/records/:userId', protect, counsellor, getSadhanaRecordsForUser);
 
 module.exports = router;
