@@ -1,6 +1,7 @@
 // backend/src/controllers/eventController.js
 
 const Event = require('../models/eventModel');
+const { processItems } = require('../utils/urlHelper');
 
 // @desc    Create a new event
 // @route   POST /api/events
@@ -21,7 +22,7 @@ const createEvent = async (req, res) => {
 const getEvents = async (req, res) => {
   try {
     const events = await Event.findAll({ order: [['date', 'DESC']] });
-    res.json(events);
+    res.json(processItems(events, 'image'));
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
@@ -34,7 +35,7 @@ const getEventById = async (req, res) => {
     try {
         const event = await Event.findByPk(req.params.id);
         if (event) {
-            res.json(event);
+            res.json(processItems(event, 'image'));
         } else {
             res.status(404).json({ message: 'Event not found' });
         }

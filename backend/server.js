@@ -16,7 +16,7 @@ require('./src/models/counsellorAssignmentModel');
 require('./src/models/sadhanaRecordModel');
 require('./src/models/galleryItemModel');
 require('./src/models/documentModel');
-require('./src/models/sundaySchoolModel'); // <-- Import new model
+require('./src/models/sundaySchoolModel');
 
 // Import routes
 const authRoutes = require('./src/routes/authRoutes');
@@ -26,7 +26,7 @@ const sadhanaRoutes = require('./src/routes/sadhanaRoutes');
 const uploadRoutes = require('./src/routes/uploadRoutes');
 const galleryRoutes = require('./src/routes/galleryRoutes');
 const documentRoutes = require('./src/routes/documentRoutes');
-const sundaySchoolRoutes = require('./src/routes/sundaySchoolRoutes'); // <-- Import new route
+const sundaySchoolRoutes = require('./src/routes/sundaySchoolRoutes');
 
 // Initialize Express app
 const app = express();
@@ -43,11 +43,12 @@ app.use('/api/sadhana', sadhanaRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/documents', documentRoutes);
-app.use('/api/sunday-school', sundaySchoolRoutes); // <-- Use new route
+app.use('/api/sunday-school', sundaySchoolRoutes);
 
 // --- Make 'uploads' folder static ---
-const dirname = path.resolve();
-app.use('/uploads', express.static(path.join(dirname, '/backend/uploads')));
+// CORRECTED: Use __dirname for a more reliable path
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // --- Database Connection & Server Startup ---
 const PORT = process.env.PORT || 5000;

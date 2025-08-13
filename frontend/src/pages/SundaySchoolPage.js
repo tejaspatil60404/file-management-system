@@ -1,37 +1,61 @@
 // frontend/src/pages/SundaySchoolPage.js
 
-import React from 'react';
-import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Card, CardContent, CardMedia } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Card, CardContent, CardMedia, CircularProgress, Alert } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import PaletteIcon from '@mui/icons-material/Palette';
-
-// --- Mock Data for the Sunday School Page ---
-const upcomingEvent = {
-  name: 'Annual Children\'s Day Festival',
-  date: '2025-11-14T10:00:00Z',
-  description: 'A fun-filled day with dramas, kirtan, games, and a special feast for all the children. All are welcome to join and celebrate with us!',
-  image: 'https://placehold.co/1200x400/333/f0ad4e?text=Children\'s+Day+Festival',
-};
-
-const timetable = [
-  { time: '10:00 AM - 10:30 AM', activity: 'Welcome & Morning Prayers' },
-  { time: '10:30 AM - 11:15 AM', activity: 'Storytelling from Scriptures' },
-  { time: '11:15 AM - 12:00 PM', activity: 'Arts & Crafts Session' },
-  { time: '12:00 PM - 12:30 PM', activity: 'Kirtan and Music' },
-  { time: '12:30 PM - 01:00 PM', activity: 'Prasadam (Lunch)' },
-];
-
-const activities = [
-    { name: 'Scriptural Stories', description: 'Engaging stories from the Ramayana, Mahabharata, and Puranas.', icon: <PaletteIcon /> },
-    { name: 'Arts & Crafts', description: 'Creative activities like clay modeling, painting, and coloring.', icon: <PaletteIcon /> },
-    { name: 'Music & Kirtan', description: 'Learning bhajans and playing musical instruments.', icon: <ScheduleIcon /> },
-    { name: 'Drama & Skits', description: 'Performing plays based on the lives of great personalities.', icon: <EventIcon /> },
-];
-// --- End of Mock Data ---
-
+import sundaySchoolService from '../services/sundaySchoolService';
 
 const SundaySchoolPage = () => {
+  const [details, setDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await sundaySchoolService.getSundaySchoolDetails();
+        setDetails(response.data);
+      } catch (err) {
+        setError('Failed to load Sunday School details. Please try again later.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error || !details) {
+    return <Alert severity="error">{error || 'Could not load details.'}</Alert>;
+  }
+  
+  // --- CORRECTED FIX: Safely parse the timetable string into an array ---
+  let timetable = [];
+  if (details && details.timetableJson) {
+    // The backend getter should handle this, but we parse here as a safeguard.
+    if (Array.isArray(details.timetableJson)) {
+      timetable = details.timetableJson;
+    } else if (typeof details.timetableJson === 'string') {
+      try {
+        timetable = JSON.parse(details.timetableJson);
+      } catch (e) {
+        console.error("Failed to parse timetable JSON:", e);
+        timetable = []; // Default to empty array on parsing error
+      }
+    }
+  }
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h3" component="h1" gutterBottom align="center" fontWeight="bold">
@@ -50,19 +74,21 @@ const SundaySchoolPage = () => {
           <CardMedia
             component="img"
             sx={{ width: { xs: '100%', md: 400 } }}
-            image={upcomingEvent.image}
-            alt={upcomingEvent.name}
+            image={details.upcomingEventImage || 'https://placehold.co/1200x400/333/f0ad4e?text=Upcoming+Event'}
+            alt={details.upcomingEventTitle}
           />
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: '1 0 auto', textAlign: 'left' }}>
               <Typography component="div" variant="h5" fontWeight="bold">
-                {upcomingEvent.name}
+                {details.upcomingEventTitle}
               </Typography>
-              <Typography variant="subtitle1" color="text.secondary" component="div" sx={{ mb: 2 }}>
-                {new Date(upcomingEvent.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-              </Typography>
+              {details.upcomingEventDate && (
+                <Typography variant="subtitle1" color="text.secondary" component="div" sx={{ mb: 2 }}>
+                  {new Date(details.upcomingEventDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                </Typography>
+              )}
               <Typography variant="body1">
-                {upcomingEvent.description}
+                {details.upcomingEventDescription}
               </Typography>
             </CardContent>
           </Box>
@@ -83,9 +109,9 @@ const SundaySchoolPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {timetable.map((row) => (
+              {timetable.map((row, index) => (
                 <TableRow
-                  key={row.time}
+                  key={index}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">

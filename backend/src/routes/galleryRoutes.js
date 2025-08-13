@@ -3,13 +3,15 @@
 const express = require('express');
 const router = express.Router();
 const {
+  getAllGalleryItems,
   getGalleryByEvent,
   addGalleryItem,
   deleteGalleryItem,
 } = require('../controllers/galleryController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// Public route to get media for an event
+// Public routes
+router.get('/all', getAllGalleryItems);
 router.get('/event/:eventId', getGalleryByEvent);
 
 // Admin-only routes
