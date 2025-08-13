@@ -17,6 +17,7 @@ import AdminDocumentsPage from './pages/AdminDocumentsPage';
 import AdminUsersPage from './pages/AdminUsersPage'; // <-- Import the new page
 import { Box } from '@mui/material';
 import CounsellorDashboard from './pages/CounsellorDashboard'; // <-- Import the counsellor dashboard
+import AdminGalleriesPage from './pages/AdminGalleriesPage';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               <Route path="/admin/events" element={<AdminEventsPage />} />
               <Route path="/admin/documents" element={<AdminDocumentsPage />} />
               <Route path="/admin/users" element={<AdminUsersPage />} /> {/* <-- Add the new route */}
+              <Route path="/admin/galleries" element={<AdminGalleriesPage />} />
             </Route>
           </Routes>
         </Box>
