@@ -1,0 +1,26 @@
+/* frontend/src/styles/HomePage.css */
+
+/* Base state for all animated sections */
+.section-hidden {
+  opacity: 0;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* Specific animations */
+.slide-in-left {
+  transform: translateX(-100px);
+}
+
+.slide-in-right {
+  transform: translateX(100px);
+}
+
+.fade-in {
+  transform: translateY(50px);
+}
+
+/* State when the section becomes visible */
+.section-visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}

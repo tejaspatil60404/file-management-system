@@ -6,15 +6,19 @@ import { Link as RouterLink } from 'react-router-dom';
 import PeopleIcon from '@mui/icons-material/People';
 import EventIcon from '@mui/icons-material/Event';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
-import DescriptionIcon from '@mui/icons-material/Description'; // New Icon
+import DescriptionIcon from '@mui/icons-material/Description';
+import SchoolIcon from '@mui/icons-material/School'; // New Icon
+import GroupsIcon from '@mui/icons-material/Groups';
 
 const AdminDashboard = () => {
   const adminLinks = [
     { title: 'Manage Users', path: '/admin/users', icon: <PeopleIcon fontSize="large" /> },
     { title: 'Manage Events', path: '/admin/events', icon: <EventIcon fontSize="large" /> },
     { title: 'Manage Galleries', path: '/admin/galleries', icon: <PhotoLibraryIcon fontSize="large" /> },
-    // --- New Link for Documents ---
     { title: 'Manage Documents', path: '/admin/documents', icon: <DescriptionIcon fontSize="large" /> },
+    { title: 'Sadhana Program', path: '/admin/sadhana', icon: <GroupsIcon fontSize="large" /> },
+    // --- New Link for Sunday School ---
+    { title: 'Manage Sunday School', path: '/admin/sunday-school', icon: <SchoolIcon fontSize="large" /> },
   ];
 
   return (

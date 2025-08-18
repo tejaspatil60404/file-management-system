@@ -26,12 +26,17 @@ const addSadhanaRecord = (recordData) => {
   return api.post('/sadhana/records', recordData);
 };
 
+// Get all assignments for the admin view
+const getAllAssignments = () => {
+  return api.get('/sadhana/all-assignments');
+};
 
 const sadhanaService = {
   assignCounsellor,
   getAssignedUsers,
   getSadhanaRecordsForUser,
   addSadhanaRecord,
+  getAllAssignments,
 };
 
 export default sadhanaService;

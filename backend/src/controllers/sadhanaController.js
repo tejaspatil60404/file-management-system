@@ -102,9 +102,30 @@ const addSadhanaRecord = async (req, res) => {
     }
 };
 
+// @desc    Get all counsellor assignments for the admin view
+// @route   GET /api/sadhana/all-assignments
+// @access  Private/Admin
+const getAllAssignments = async (req, res) => {
+  try {
+    const assignments = await CounsellorAssignment.findAll({
+      // Include the user details for both the counsellor and the counselee
+      include: [
+        { model: User, as: 'Counsellor', attributes: ['id', 'username'] },
+        { model: User, as: 'Counselee', attributes: ['id', 'username', 'email'] }
+      ],
+      order: [[{ model: User, as: 'Counsellor' }, 'username', 'ASC']],
+    });
+    res.json(assignments);
+  } catch (error) {
+    console.error('Error in getAllAssignments:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
     assignCounsellor,
     getAssignedUsers,
     getSadhanaRecordsForUser,
-    addSadhanaRecord
+    addSadhanaRecord,
+    getAllAssignments
 };

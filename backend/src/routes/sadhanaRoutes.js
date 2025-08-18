@@ -6,7 +6,8 @@ const {
     assignCounsellor, 
     getAssignedUsers, 
     addSadhanaRecord,
-    getSadhanaRecordsForUser
+    getSadhanaRecordsForUser,
+    getAllAssignments
 } = require('../controllers/sadhanaController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -21,6 +22,7 @@ const counsellor = (req, res, next) => {
 
 // Admin routes
 router.post('/assign', protect, admin, assignCounsellor);
+router.get('/all-assignments', protect, admin, getAllAssignments);
 
 // Counsellor routes
 router.get('/my-users', protect, counsellor, getAssignedUsers);
