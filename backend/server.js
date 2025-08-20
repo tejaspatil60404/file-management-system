@@ -1,22 +1,45 @@
-// backend/server.js
-
+// ==========================================================================
+// File: /backend/server.js (CORRECTED & SAFE)
+// ==========================================================================
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const sequelize = require('./src/config/db');
 
+// --- Import All Models ---
+const User = require('./src/models/userModel');
+const Event = require('./src/models/eventModel');
+const GalleryItem = require('./src/models/galleryItemModel');
+const Document = require('./src/models/documentModel');
+const CounsellorAssignment = require('./src/models/counsellorAssignmentModel');
+const SadhanaRecord = require('./src/models/sadhanaRecordModel');
+const SundaySchool = require('./src/models/sundaySchoolModel');
+
+// --- Define All Relationships in One Central Place with UNIQUE Aliases ---
+Event.hasMany(GalleryItem, { foreignKey: 'eventId' });
+GalleryItem.belongsTo(Event, { foreignKey: 'eventId' });
+
+User.hasMany(Document, { foreignKey: 'uploaderId' });
+Document.belongsTo(User, { foreignKey: 'uploaderId' });
+
+// CounsellorAssignment Relationships
+User.hasMany(CounsellorAssignment, { foreignKey: 'counsellorId', as: 'AssignmentsAsCounsellor' });
+CounsellorAssignment.belongsTo(User, { foreignKey: 'counsellorId', as: 'Counsellor' });
+
+User.hasOne(CounsellorAssignment, { foreignKey: 'userId', as: 'AssignmentAsCounselee' });
+CounsellorAssignment.belongsTo(User, { foreignKey: 'userId', as: 'Counselee' });
+
+// SadhanaRecord Relationships (with unique aliases)
+User.hasMany(SadhanaRecord, { foreignKey: 'counsellorId', as: 'AuthoredRecords' });
+SadhanaRecord.belongsTo(User, { foreignKey: 'counsellorId', as: 'Author' }); // Unique alias
+
+User.hasMany(SadhanaRecord, { foreignKey: 'userId', as: 'SadhanaEntries' });
+SadhanaRecord.belongsTo(User, { foreignKey: 'userId', as: 'SubjectUser' }); // Unique alias
+
+
 // Load environment variables
 dotenv.config();
-
-// --- Import Models to register them with Sequelize ---
-require('./src/models/userModel');
-require('./src/models/eventModel');
-require('./src/models/counsellorAssignmentModel');
-require('./src/models/sadhanaRecordModel');
-require('./src/models/galleryItemModel');
-require('./src/models/documentModel');
-require('./src/models/sundaySchoolModel');
 
 // Import routes
 const authRoutes = require('./src/routes/authRoutes');
@@ -46,9 +69,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/sunday-school', sundaySchoolRoutes);
 
 // --- Make 'uploads' folder static ---
-// CORRECTED: Use __dirname for a more reliable path
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 // --- Database Connection & Server Startup ---
 const PORT = process.env.PORT || 5000;

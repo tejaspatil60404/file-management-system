@@ -23,7 +23,7 @@ const counsellor = (req, res, next) => {
 
 // Admin routes
 router.post('/assign', protect, admin, assignCounsellor);
-router.get('/all-assignments', protect, admin, getAllAssignments);
+router.get('/all-assignments', protect, admin, getAllAssignments); // <-- Add this line
 
 // Counsellor routes
 router.post('/assign-self', protect, counsellor, assignUserToSelf); // <-- Add the new route

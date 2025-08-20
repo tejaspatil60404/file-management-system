@@ -2,18 +2,27 @@
 
 const User = require('../models/userModel');
 const CounsellorAssignment = require('../models/counsellorAssignmentModel');
-const { Op } = require('sequelize'); // Import the Op operator for advanced queries
+const { Op } = require('sequelize');
 
-// @desc    Get all users
-// @route   GET /api/users
-// @access  Private/Admin
 const getUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password'] },
+      include: {
+        model: CounsellorAssignment,
+        as: 'AssignmentAsCounselee', // Use the correct unique alias
+        required: false,
+        include: {
+          model: User,
+          as: 'Counsellor',
+          attributes: ['username'],
+        },
+      },
+      order: [['id', 'ASC']],
     });
     res.json(users);
   } catch (error) {
+    console.error("Error fetching users:", error);
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
@@ -25,7 +34,7 @@ const getCounsellors = async (req, res) => {
   try {
     const counsellors = await User.findAll({
       where: { role: 'counsellor' },
-      attributes: ['id', 'username'], // Only send necessary info
+      attributes: ['id', 'username'],
     });
     res.json(counsellors);
   } catch (error) {
@@ -57,22 +66,20 @@ const updateUserRole = async (req, res) => {
   }
 };
 
-// ... (keep existing functions like getUsers, getCounsellors, etc.)
-
 // @desc    Get all users who are not assigned to any counsellor
 // @route   GET /api/users/unassigned
 // @access  Private/Counsellor
 const getUnassignedUsers = async (req, res) => {
   try {
     const assignments = await CounsellorAssignment.findAll({
-      attributes: ['userId'] // Get all IDs of users who are already assigned
+      attributes: ['userId']
     });
     const assignedUserIds = assignments.map(a => a.userId);
 
     const unassignedUsers = await User.findAll({
       where: {
-        id: { [Op.notIn]: assignedUserIds }, // Find users whose ID is NOT IN the assigned list
-        role: 'user' // Only find users with the 'user' role
+        id: { [Op.notIn]: assignedUserIds },
+        role: 'user'
       },
       attributes: ['id', 'username', 'email']
     });
