@@ -17,11 +17,15 @@ const updateUserRole = (id, role) => {
   return api.put(`/users/${id}/role`, { role });
 };
 
+const getUnassignedUsers = () => {
+  return api.get('/users/unassigned');
+};
 
 const userService = {
   getUsers,
   getCounsellors,
   updateUserRole,
+  getUnassignedUsers, // <-- Add this
 };
 
 export default userService;

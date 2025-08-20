@@ -4,6 +4,39 @@ const User = require('../models/userModel');
 const CounsellorAssignment = require('../models/counsellorAssignmentModel');
 const SadhanaRecord = require('../models/sadhanaRecordModel');
 
+// --- NEW FUNCTION for Counsellors ---
+// @desc    Assign an existing user to the currently logged-in counsellor
+// @route   POST /api/sadhana/assign-self
+// @access  Private/Counsellor
+const assignUserToSelf = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const counsellorId = req.user.id; // The logged-in counsellor
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required.' });
+    }
+
+    // Use findOrCreate to handle both new and existing assignments safely
+    const [assignment, created] = await CounsellorAssignment.findOrCreate({
+      where: { userId: userId },
+      defaults: { counsellorId: counsellorId },
+    });
+
+    if (!created) {
+      // If the user was already assigned, update it to this counsellor
+      assignment.counsellorId = counsellorId;
+      await assignment.save();
+      return res.json({ message: 'User re-assigned to you successfully.', assignment });
+    }
+
+    res.status(201).json({ message: 'User assigned to you successfully.', assignment });
+  } catch (error) {
+    console.error('Error in assignUserToSelf:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 // @desc    Assign a user to a counsellor
 // @route   POST /api/sadhana/assign
 // @access  Private/Admin
@@ -127,5 +160,6 @@ module.exports = {
     getAssignedUsers,
     getSadhanaRecordsForUser,
     addSadhanaRecord,
-    getAllAssignments
+    getAllAssignments,
+    assignUserToSelf, // <-- New function for counsellors to assign themselves
 };

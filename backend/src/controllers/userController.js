@@ -1,6 +1,8 @@
 // backend/src/controllers/userController.js
 
 const User = require('../models/userModel');
+const CounsellorAssignment = require('../models/counsellorAssignmentModel');
+const { Op } = require('sequelize'); // Import the Op operator for advanced queries
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -55,8 +57,36 @@ const updateUserRole = async (req, res) => {
   }
 };
 
+// ... (keep existing functions like getUsers, getCounsellors, etc.)
+
+// @desc    Get all users who are not assigned to any counsellor
+// @route   GET /api/users/unassigned
+// @access  Private/Counsellor
+const getUnassignedUsers = async (req, res) => {
+  try {
+    const assignments = await CounsellorAssignment.findAll({
+      attributes: ['userId'] // Get all IDs of users who are already assigned
+    });
+    const assignedUserIds = assignments.map(a => a.userId);
+
+    const unassignedUsers = await User.findAll({
+      where: {
+        id: { [Op.notIn]: assignedUserIds }, // Find users whose ID is NOT IN the assigned list
+        role: 'user' // Only find users with the 'user' role
+      },
+      attributes: ['id', 'username', 'email']
+    });
+
+    res.json(unassignedUsers);
+  } catch (error) {
+    console.error("Error fetching unassigned users:", error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   getCounsellors,
   updateUserRole,
+  getUnassignedUsers,
 };

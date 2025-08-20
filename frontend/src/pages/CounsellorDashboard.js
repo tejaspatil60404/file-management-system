@@ -2,23 +2,28 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, CircularProgress, Alert } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import sadhanaService from '../services/sadhanaService';
+import authService from '../services/authService'; // We need this for registration
 import { useAuth } from '../context/authContext';
 import SadhanaRecordModal from '../components/SadhanaRecordModal';
+import AssignUserModal from '../components/AssignUserModal';
+
+// frontend/src/pages/CounsellorDashboard.js (Updated)
 
 const CounsellorDashboard = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user } = useAuth();
-
-  // State for the modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchAssignedUsers = async () => {
     try {
       setLoading(true);
+      setError('');
       const response = await sadhanaService.getAssignedUsers();
       const users = response.data.map(assignment => assignment.Counselee);
       setAssignedUsers(users);
@@ -36,43 +41,55 @@ const CounsellorDashboard = () => {
     }
   }, [user]);
 
-  const handleOpenModal = (userToManage) => {
+  const handleOpenRecordModal = (userToManage) => {
     setSelectedUser(userToManage);
-    setIsModalOpen(true);
+    setIsRecordModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseRecordModal = () => {
+    setIsRecordModalOpen(false);
     setSelectedUser(null);
   };
 
   const handleSaveRecord = async (recordData) => {
     try {
       await sadhanaService.addSadhanaRecord(recordData);
-      // You could show a success message here
-      handleCloseModal();
+      handleCloseRecordModal();
     } catch (err) {
-      // You could show an error message in the modal
       console.error("Failed to save record", err);
     }
   };
 
-  if (loading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}><CircularProgress /></Box>;
-  }
-
-  if (error) {
-    return <Alert severity="error">{error}</Alert>;
-  }
+  const handleAssignUser = async (userIdToAssign) => {
+    try {
+      // Use the new, correct service function
+      await sadhanaService.assignUserToSelf(userIdToAssign);
+      setIsAssignModalOpen(false);
+      fetchAssignedUsers(); // Refresh the list
+    } catch (err) {
+      setError('Failed to assign user.');
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" fontWeight="bold" sx={{ mb: 4 }}>
-        Counsellor Dashboard
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" component="h1" fontWeight="bold">
+          Counsellor Dashboard
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setIsAssignModalOpen(true)}
+        >
+          Assign User
+        </Button>
+      </Box>
+
       <Typography variant="h6" sx={{ mb: 2 }}>
         My Assigned Users
       </Typography>
+
       <TableContainer component={Paper} elevation={3}>
         <Table sx={{ minWidth: 650 }} aria-label="assigned users table">
           <TableHead sx={{ backgroundColor: '#333' }}>
@@ -92,7 +109,7 @@ const CounsellorDashboard = () => {
                     <Button 
                       variant="contained" 
                       size="small"
-                      onClick={() => handleOpenModal(assignedUser)}
+                      onClick={() => handleOpenRecordModal(assignedUser)}
                     >
                       Manage Records
                     </Button>
@@ -111,10 +128,16 @@ const CounsellorDashboard = () => {
       </TableContainer>
 
       <SadhanaRecordModal
-        open={isModalOpen}
-        handleClose={handleCloseModal}
+        open={isRecordModalOpen}
+        handleClose={handleCloseRecordModal}
         user={selectedUser}
         onSave={handleSaveRecord}
+      />
+
+      <AssignUserModal
+        open={isAssignModalOpen}
+        handleClose={() => setIsAssignModalOpen(false)}
+        onAssign={handleAssignUser}
       />
     </Container>
   );

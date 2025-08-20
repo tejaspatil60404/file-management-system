@@ -11,6 +11,9 @@ const assignCounsellor = (userId, counsellorId) => {
 
 // --- Counsellor Routes ---
 
+const assignUserToSelf = (userId) => {
+  return api.post('/sadhana/assign-self', { userId });
+};
 // Get all users assigned to the logged-in counsellor
 const getAssignedUsers = () => {
   return api.get('/sadhana/my-users');
@@ -37,6 +40,7 @@ const sadhanaService = {
   getSadhanaRecordsForUser,
   addSadhanaRecord,
   getAllAssignments,
+  assignUserToSelf, // <-- Add this
 };
 
 export default sadhanaService;
