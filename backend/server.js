@@ -1,4 +1,3 @@
-// ==========================================================================
 // File: /backend/server.js (CORRECTED & SAFE)
 // ==========================================================================
 const express = require('express');
@@ -15,6 +14,7 @@ const Document = require('./src/models/documentModel');
 const CounsellorAssignment = require('./src/models/counsellorAssignmentModel');
 const SadhanaRecord = require('./src/models/sadhanaRecordModel');
 const SundaySchool = require('./src/models/sundaySchoolModel');
+const Donation = require('./src/models/donationModel');
 
 // --- Define All Relationships in One Central Place with UNIQUE Aliases ---
 Event.hasMany(GalleryItem, { foreignKey: 'eventId' });
@@ -23,19 +23,18 @@ GalleryItem.belongsTo(Event, { foreignKey: 'eventId' });
 User.hasMany(Document, { foreignKey: 'uploaderId' });
 Document.belongsTo(User, { foreignKey: 'uploaderId' });
 
-// CounsellorAssignment Relationships
 User.hasMany(CounsellorAssignment, { foreignKey: 'counsellorId', as: 'AssignmentsAsCounsellor' });
 CounsellorAssignment.belongsTo(User, { foreignKey: 'counsellorId', as: 'Counsellor' });
-
 User.hasOne(CounsellorAssignment, { foreignKey: 'userId', as: 'AssignmentAsCounselee' });
 CounsellorAssignment.belongsTo(User, { foreignKey: 'userId', as: 'Counselee' });
 
-// SadhanaRecord Relationships (with unique aliases)
 User.hasMany(SadhanaRecord, { foreignKey: 'counsellorId', as: 'AuthoredRecords' });
-SadhanaRecord.belongsTo(User, { foreignKey: 'counsellorId', as: 'Author' }); // Unique alias
-
+SadhanaRecord.belongsTo(User, { foreignKey: 'counsellorId', as: 'Author' });
 User.hasMany(SadhanaRecord, { foreignKey: 'userId', as: 'SadhanaEntries' });
-SadhanaRecord.belongsTo(User, { foreignKey: 'userId', as: 'SubjectUser' }); // Unique alias
+SadhanaRecord.belongsTo(User, { foreignKey: 'userId', as: 'SubjectUser' });
+
+User.hasMany(Donation, { foreignKey: 'userId' });
+Donation.belongsTo(User, { foreignKey: 'userId' });
 
 
 // Load environment variables
@@ -50,6 +49,7 @@ const uploadRoutes = require('./src/routes/uploadRoutes');
 const galleryRoutes = require('./src/routes/galleryRoutes');
 const documentRoutes = require('./src/routes/documentRoutes');
 const sundaySchoolRoutes = require('./src/routes/sundaySchoolRoutes');
+const donationRoutes = require('./src/routes/donationRoutes');
 
 // Initialize Express app
 const app = express();
@@ -67,6 +67,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/sunday-school', sundaySchoolRoutes);
+app.use('/api/donations', donationRoutes);
 
 // --- Make 'uploads' folder static ---
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

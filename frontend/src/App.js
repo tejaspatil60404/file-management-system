@@ -22,6 +22,7 @@ import AdminSundaySchoolPage from './pages/AdminSundaySchoolPage'; // <-- Import
 import Footer from './components/Footer';
 import CssBaseline from '@mui/material/CssBaseline';
 import AdminSadhanaPage from './pages/AdminSadhanaPage'; // <-- Import the new admin page for Sadhana Program
+import DonationsPage from './pages/DonationsPage'; // <-- Import the Donations page
 
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
             <Route path="/admin/galleries" element={<AdminGalleriesPage />} />
             <Route path="/admin/sunday-school" element={<AdminSundaySchoolPage />} /> {/* <-- Add the new route */}
             <Route path="/admin/sadhana" element={<AdminSadhanaPage />} /> {/* <-- Add the new route for Sadhana Program */}
+            <Route path="/donate" element={<DonationsPage />} />
           </Route>
         </Routes>
       </Box>
