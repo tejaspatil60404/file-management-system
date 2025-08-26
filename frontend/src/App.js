@@ -23,45 +23,46 @@ import Footer from './components/Footer';
 import CssBaseline from '@mui/material/CssBaseline';
 import AdminSadhanaPage from './pages/AdminSadhanaPage'; // <-- Import the new admin page for Sadhana Program
 import DonationsPage from './pages/DonationsPage'; // <-- Import the Donations page
-
+import DonationHistoryPage from './pages/DonationHistoryPage';
 
 function App() {
   return (
     <Router>
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Navbar />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, mt: { xs: '56px', sm: '64px' } }}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/:id" element={<EventDetailPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/sunday-school" element={<SundaySchoolPage />} />
-
-          {/* Counsellor & Admin Routes */}
-          <Route element={<ProtectedRoute allowedRoles={['counsellor', 'admin']} />}>
-            <Route path="/counsellor" element={<CounsellorDashboard />} />
-          </Route>
-
-          {/* Admin-Only Routes */}
-          <Route element={<ProtectedRoute adminOnly={true} />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/events" element={<AdminEventsPage />} />
-            <Route path="/admin/documents" element={<AdminDocumentsPage />} />
-            <Route path="/admin/users" element={<AdminUsersPage />} /> {/* <-- Add the new route */}
-            <Route path="/admin/galleries" element={<AdminGalleriesPage />} />
-            <Route path="/admin/sunday-school" element={<AdminSundaySchoolPage />} /> {/* <-- Add the new route */}
-            <Route path="/admin/sadhana" element={<AdminSadhanaPage />} /> {/* <-- Add the new route for Sadhana Program */}
+        <Navbar />
+        <Box component="main" sx={{ flexGrow: 1, p: 3, mt: { xs: '56px', sm: '64px' } }}>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/sunday-school" element={<SundaySchoolPage />} />
+            <Route path="/my-donations" element={<DonationHistoryPage />} />
             <Route path="/donate" element={<DonationsPage />} />
-          </Route>
-        </Routes>
+
+            {/* Counsellor & Admin Routes */}
+            <Route element={<ProtectedRoute allowedRoles={['counsellor', 'admin']} />}>
+              <Route path="/counsellor" element={<CounsellorDashboard />} />
+            </Route>
+
+            {/* Admin-Only Routes */}
+            <Route element={<ProtectedRoute adminOnly={true} />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/events" element={<AdminEventsPage />} />
+              <Route path="/admin/documents" element={<AdminDocumentsPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} /> {/* <-- Add the new route */}
+              <Route path="/admin/galleries" element={<AdminGalleriesPage />} />
+              <Route path="/admin/sunday-school" element={<AdminSundaySchoolPage />} /> {/* <-- Add the new route */}
+              <Route path="/admin/sadhana" element={<AdminSadhanaPage />} /> {/* <-- Add the new route for Sadhana Program */}
+            </Route>
+          </Routes>
+        </Box>
+        <Footer />
       </Box>
-      <Footer />
-    </Box>
     </Router >
   );
 }

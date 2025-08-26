@@ -42,8 +42,11 @@ const Navbar = () => {
           </ListItem>
         ))}
         <Divider />
-        <ListItem component={RouterLink} to="/donate" disablePadding>
+        <ListItem component={RouterLink} to="/my-donations" disablePadding>
           <ListItemText primary="Donate Now" sx={{ textAlign: 'center' }} />
+        </ListItem>
+        <ListItem component={RouterLink} to="/donate" disablePadding>
+          <ListItemText primary="My Donations" sx={{ textAlign: 'center' }} />
         </ListItem>
         <Divider />
         {user ? (
@@ -112,6 +115,13 @@ const Navbar = () => {
               color="white"
             >
               Donate Now
+            </Button>
+            <Button
+              component={RouterLink}
+              to="/my-donations"
+              color="white"
+            >
+              My Donations
             </Button>
 
             {user ? (

@@ -86,7 +86,28 @@ const verifyPayment = async (req, res) => {
   }
 };
 
+// --- NEW FUNCTION ---
+// @desc    Get donation history for the logged-in user
+// @route   GET /api/donations/history
+// @access  Private
+const getDonationHistory = async (req, res) => {
+  try {
+    const donations = await Donation.findAll({
+      where: { 
+        userId: req.user.id,
+        status: 'successful' // Only show successful donations
+      },
+      order: [['createdAt', 'DESC']],
+    });
+    res.json(donations);
+  } catch (error) {
+    console.error('Error fetching donation history:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 module.exports = {
   createOrder,
   verifyPayment,
+  getDonationHistory,
 };

@@ -1,3 +1,4 @@
+// ==========================================================================
 // File: /backend/server.js (CORRECTED & SAFE)
 // ==========================================================================
 const express = require('express');
@@ -16,7 +17,7 @@ const SadhanaRecord = require('./src/models/sadhanaRecordModel');
 const SundaySchool = require('./src/models/sundaySchoolModel');
 const Donation = require('./src/models/donationModel');
 
-// --- Define All Relationships in One Central Place with UNIQUE Aliases ---
+// --- Define All Relationships in One Central Place ---
 Event.hasMany(GalleryItem, { foreignKey: 'eventId' });
 GalleryItem.belongsTo(Event, { foreignKey: 'eventId' });
 
@@ -80,7 +81,8 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('MySQL Connection has been established successfully.');
     
-    await sequelize.sync();
+    // --- UPDATED: Use { alter: true } to force table updates ---
+    await sequelize.sync({ alter: true });
     console.log("All models were synchronized successfully.");
 
     app.listen(PORT, () => {

@@ -1,21 +1,24 @@
-// ==========================================================================
-// File: /frontend/src/services/donationService.js (New File)
+// File: /frontend/src/services/donationService.js (Updated)
 // ==========================================================================
 import api from './api';
 
-// Create a donation order (protected route)
 const createOrder = (amount) => {
   return api.post('/donations/create-order', { amount });
 };
 
-// Verify the payment (protected route)
 const verifyPayment = (paymentData) => {
   return api.post('/donations/verify-payment', paymentData);
+};
+
+// --- NEW FUNCTION ---
+const getDonationHistory = () => {
+  return api.get('/donations/history');
 };
 
 const donationService = {
   createOrder,
   verifyPayment,
+  getDonationHistory,
 };
 
 export default donationService;

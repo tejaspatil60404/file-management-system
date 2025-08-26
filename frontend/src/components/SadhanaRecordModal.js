@@ -1,7 +1,7 @@
 // frontend/src/components/SadhanaRecordModal.js
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Box, Typography, TextField, Button, List, ListItem, ListItemText, Divider, CircularProgress, Alert } from '@mui/material';
+import { Modal, Box, Typography, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Divider, CircularProgress, Alert, Grid } from '@mui/material';
 import sadhanaService from '../services/sadhanaService';
 
 const style = {
@@ -9,16 +9,25 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 500,
+  width: { xs: '90%', sm: 600 },
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '90vh',
+  overflowY: 'auto',
 };
 
-const SadhanaRecordModal = ({ open, handleClose, user, onSave }) => {
+const SadhanaRecordModal = ({ open, handleClose, user, onSaveSuccess }) => {
+  // State for the form
   const [level, setLevel] = useState(1);
-  const [notes, setNotes] = useState('');
+  const [chantingRounds, setChantingRounds] = useState(0);
+  const [readingInMinutes, setReadingInMinutes] = useState('');
+  const [shravan, setShravan] = useState('');
+  const [seva, setSeva] = useState('');
+  const [remarks, setRemarks] = useState('');
+  
+  // State for displaying past records
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -32,7 +41,6 @@ const SadhanaRecordModal = ({ open, handleClose, user, onSave }) => {
         setRecords(response.data);
       } catch (err) {
         setError('Failed to fetch past records.');
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -41,18 +49,31 @@ const SadhanaRecordModal = ({ open, handleClose, user, onSave }) => {
     if (user && open) {
       fetchRecords(user.id);
     }
+    // Reset form when modal opens
     setLevel(1);
-    setNotes('');
+    setChantingRounds(0);
+    setReadingInMinutes('');
+    setShravan('');
+    setSeva('');
+    setRemarks('');
   }, [user, open]);
 
-  const handleSubmit = () => {
-    const recordData = {
-      userId: user.id,
-      level,
-      notes,
-    };
-    onSave(recordData);
-    setRecords([{...recordData, recordDate: new Date().toISOString()}, ...records]);
+  const handleSubmit = async () => {
+    try {
+      const recordData = {
+        userId: user.id,
+        level,
+        chantingRounds,
+        readingInMinutes: Number(readingInMinutes) || 0,
+        shravan,
+        seva,
+        remarks,
+      };
+      await sadhanaService.addSadhanaRecord(recordData);
+      onSaveSuccess();
+    } catch (err) {
+      setError('Failed to save the record.');
+    }
   };
 
   if (!user) return null;
@@ -63,29 +84,75 @@ const SadhanaRecordModal = ({ open, handleClose, user, onSave }) => {
         <Typography variant="h6" component="h2">
           Sadhana Records for {user.username}
         </Typography>
+        
         <Box component="form" noValidate sx={{ mt: 2 }}>
           <Typography variant="subtitle1">Add New Record</Typography>
-          <TextField margin="normal" fullWidth label="Level" type="number" value={level} onChange={(e) => setLevel(e.target.value)} />
-          <TextField margin="normal" fullWidth label="Notes" multiline rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
-          <Button onClick={handleSubmit} variant="contained" sx={{ mt: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField margin="normal" fullWidth label="Level" type="number" value={level} onChange={(e) => setLevel(e.target.value)} />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField margin="normal" fullWidth label="Chanting Rounds" type="number" value={chantingRounds} onChange={(e) => setChantingRounds(e.target.value)} />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField margin="normal" fullWidth label="Reading (Minutes)" type="number" value={readingInMinutes} onChange={(e) => setReadingInMinutes(e.target.value)} />
+            </Grid>
+             <Grid item xs={12} sm={4}>
+              <TextField margin="normal" fullWidth label="Shravan (Hearing)" value={shravan} onChange={(e) => setShravan(e.target.value)} />
+            </Grid>
+             <Grid item xs={12} sm={4}>
+              <TextField margin="normal" fullWidth label="Seva (Service)" value={seva} onChange={(e) => setSeva(e.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+                <TextField margin="normal" fullWidth label="Remarks" multiline rows={2} value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+            </Grid>
+          </Grid>
+          <Button onClick={handleSubmit} variant="contained" sx={{ mt: 2 }}>
             Save Record
           </Button>
         </Box>
+
         <Divider sx={{ my: 3 }} />
+
         <Typography variant="subtitle1">Past Records</Typography>
         {error && <Alert severity="error" sx={{ my: 1 }}>{error}</Alert>}
         {loading ? <CircularProgress /> : (
-          <List sx={{ maxHeight: 200, overflow: 'auto' }}>
-            {records.length > 0 ? records.map(record => (
-              <ListItem key={record.id || Math.random()} disablePadding>
-                <ListItemText
-                  primary={`Level ${record.level}`}
-                  secondary={`${new Date(record.recordDate).toLocaleDateString()} - ${record.notes}`}
-                />
-              </ListItem>
-            )) : <Typography>No records found.</Typography>}
-          </List>
+          <Paper sx={{ maxHeight: 250, overflow: 'auto', mt: 1 }}>
+            <TableContainer>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>Date</TableCell>
+                    <TableCell>Level</TableCell>
+                    <TableCell>Rounds</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap' }}>Reading (min)</TableCell>
+                    <TableCell>Shravan</TableCell>
+                    <TableCell>Seva</TableCell>
+                    <TableCell>Remarks</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {records.length > 0 ? records.map(record => (
+                    <TableRow key={record.id}>
+                      <TableCell>{new Date(record.recordDate).toLocaleDateString()}</TableCell>
+                      <TableCell>{record.level}</TableCell>
+                      <TableCell>{record.chantingRounds}</TableCell>
+                      <TableCell>{record.readingInMinutes}</TableCell>
+                      <TableCell>{record.shravan}</TableCell>
+                      <TableCell>{record.seva}</TableCell>
+                      <TableCell>{record.remarks}</TableCell>
+                    </TableRow>
+                  )) : (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center">No records found.</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         )}
+
         <Button onClick={handleClose} sx={{ mt: 3 }}>Close</Button>
       </Box>
     </Modal>

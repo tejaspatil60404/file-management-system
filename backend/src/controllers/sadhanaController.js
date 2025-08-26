@@ -3,6 +3,82 @@
 const User = require('../models/userModel');
 const CounsellorAssignment = require('../models/counsellorAssignmentModel');
 const SadhanaRecord = require('../models/sadhanaRecordModel');
+// @desc    Add a sadhana record for a user
+// @route   POST /api/sadhana/records
+// @access  Private/Counsellor
+const addSadhanaRecord = async (req, res) => {
+    try {
+        const { userId, level, chantingRounds, readingInMinutes, shravan, seva, remarks } = req.body;
+        const counsellorId = req.user.id;
+
+        const record = await SadhanaRecord.create({
+            userId,
+            counsellorId,
+            level,
+            chantingRounds,
+            readingInMinutes,
+            shravan,
+            seva,
+            remarks,
+        });
+
+        res.status(201).json(record);
+    } catch (error) {
+        console.error('Error in addSadhanaRecord:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+
+// @desc    Get all sadhana records for a specific user
+// @route   GET /api/sadhana/records/:userId
+// @access  Private/Counsellor
+const getSadhanaRecordsForUser = async (req, res) => {
+  try {
+    const records = await SadhanaRecord.findAll({
+      where: { userId: req.params.userId },
+      order: [['recordDate', 'DESC']],
+    });
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Get all counsellor assignments for the admin view, including user progress
+// @route   GET /api/sadhana/all-assignments
+// @access  Private/Admin
+const getAllAssignments = async (req, res) => {
+  try {
+    const assignments = await CounsellorAssignment.findAll({
+      include: [
+        { 
+          model: User, 
+          as: 'Counsellor', 
+          attributes: ['id', 'username'] 
+        },
+        { 
+          model: User, 
+          as: 'Counselee', 
+          attributes: ['id', 'username', 'email'],
+          include: {
+            model: SadhanaRecord,
+            as: 'SadhanaEntries',
+            // --- UPDATED: Fetch all the new fields ---
+            attributes: ['level', 'recordDate', 'chantingRounds', 'readingInMinutes', 'shravan', 'seva', 'remarks'],
+            required: false,
+          }
+        }
+      ],
+      order: [
+        [{ model: User, as: 'Counsellor' }, 'username', 'ASC'],
+      ],
+    });
+    res.json(assignments);
+  } catch (error) {
+    console.error('Error in getAllAssignments:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
 
 // --- NEW FUNCTION for Counsellors ---
 // @desc    Assign an existing user to the currently logged-in counsellor
@@ -82,68 +158,6 @@ const assignCounsellor = async (req, res) => {
   } catch (error) {
     // This will log the detailed error to your backend terminal
     console.error('Error in assignCounsellor:', error); 
-    res.status(500).json({ message: 'Server Error', error: error.message });
-  }
-};
-
-// @desc    Get all sadhana records for a specific user
-// @route   GET /api/sadhana/records/:userId
-// @access  Private/Counsellor
-const getSadhanaRecordsForUser = async (req, res) => {
-  try {
-    const records = await SadhanaRecord.findAll({
-      where: { userId: req.params.userId },
-      order: [['recordDate', 'DESC']],
-    });
-    res.json(records);
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
-  }
-};
-
-// @desc    Add a sadhana record for a user
-// @route   POST /api/sadhana/records
-// @access  Private/Counsellor
-const addSadhanaRecord = async (req, res) => {
-    try {
-        const { userId, level, notes } = req.body;
-        const counsellorId = req.user.id;
-        const record = await SadhanaRecord.create({
-            userId,
-            counsellorId,
-            level,
-            notes,
-        });
-        res.status(201).json(record);
-    } catch (error) {
-        res.status(500).json({ message: 'Server Error', error: error.message });
-    }
-};
-
-const getAllAssignments = async (req, res) => {
-  try {
-    const assignments = await CounsellorAssignment.findAll({
-      include: [
-        { model: User, as: 'Counsellor', attributes: ['id', 'username'] },
-        { 
-          model: User, 
-          as: 'Counselee', 
-          attributes: ['id', 'username', 'email'],
-          include: {
-            model: SadhanaRecord,
-            as: 'SadhanaEntries', // Use the correct unique alias
-            attributes: ['level', 'notes', 'recordDate'],
-            required: false,
-          }
-        }
-      ],
-      order: [
-        [{ model: User, as: 'Counsellor' }, 'username', 'ASC'],
-      ],
-    });
-    res.json(assignments);
-  } catch (error) {
-    console.error('Error in getAllAssignments:', error);
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
