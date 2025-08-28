@@ -1,7 +1,7 @@
 // frontend/src/pages/GalleryPage.js
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, ImageList, ImageListItem, ImageListItemBar, Box, CircularProgress, Alert } from '@mui/material';
+import { Container, Typography, ImageList, ImageListItem, ImageListItemBar, Box, CircularProgress, Alert, useTheme, useMediaQuery } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 import galleryService from '../services/galleryService';
@@ -11,20 +11,26 @@ const GalleryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // MUI hooks to determine screen size
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+
   useEffect(() => {
     const fetchGallery = async () => {
       try {
         setLoading(true);
         const response = await galleryService.getAllGalleryItems();
         
-        // Group media by event and year
         const groupedMedia = response.data.reduce((acc, item) => {
-          const year = new Date(item.Event.date).getFullYear();
-          const key = `${item.Event.title} ${year}`;
-          if (!acc[key]) {
-            acc[key] = [];
+          if (item.Event) {
+            const year = new Date(item.Event.date).getFullYear();
+            const key = `${item.Event.title} ${year}`;
+            if (!acc[key]) {
+              acc[key] = [];
+            }
+            acc[key].push(item);
           }
-          acc[key].push(item);
           return acc;
         }, {});
 
@@ -39,6 +45,13 @@ const GalleryPage = () => {
 
     fetchGallery();
   }, []);
+
+  // Determine the number of columns based on screen size
+  const getCols = () => {
+    if (isMobile) return 2;
+    if (isTablet) return 3;
+    return 4;
+  };
 
   if (loading) {
     return (
@@ -66,11 +79,11 @@ const GalleryPage = () => {
             <Typography variant="h4" component="h2" gutterBottom sx={{ mt: 4, mb: 2, borderBottom: '2px solid #f0ad4e' }}>
               {eventKey}
             </Typography>
-            <ImageList variant="quilted" cols={4} rowHeight={200} gap={8}>
-              {mediaByEvent[eventKey].map((item, index) => (
-                <ImageListItem key={item.id} cols={index % 5 === 0 ? 2 : 1} rows={index % 5 === 0 ? 2 : 1}>
+            <ImageList variant="quilted" cols={getCols()} rowHeight={200} gap={8}>
+              {mediaByEvent[eventKey].map((item) => (
+                <ImageListItem key={item.id}>
                   <img
-                    src={item.url} // Use the URL from the database
+                    src={item.url}
                     alt={item.description}
                     loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}

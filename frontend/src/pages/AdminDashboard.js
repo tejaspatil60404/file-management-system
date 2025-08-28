@@ -41,7 +41,7 @@ const AdminDashboard = () => {
                 justifyContent: 'center',
                 textDecoration: 'none',
                 color: 'inherit',
-                height: 180,
+                height: '100%',
                 transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                 '&:hover': {
                   transform: 'scale(1.05)',

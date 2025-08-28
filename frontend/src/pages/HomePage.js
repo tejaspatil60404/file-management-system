@@ -7,17 +7,16 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useScrollAnimation } from '../hooks/useScrollAnimation'; // Import the custom hook
 import '../styles/HomePage.css'; // Import the new CSS
 
-// --- Mock Data ---
 const upcomingEvents = [
-  { id: 4, name: 'Janmashtami 2025', date: '2025-08-26', image: 'http://localhost:5000/uploads/file-1755401079243.jpg' },
-  { id: 5, name: 'Diwali Festival', date: '2025-10-21', image: 'http://localhost:5000/uploads/file-1755401061152.webp' },
-  { id: 3, name: 'Govardhan Puja', date: '2025-11-02', image: 'http://localhost:5000/uploads/file-1755148789161.jpg' },
+  { id: 4, name: 'Janmashtami 2025', date: '2025-08-26', image: `http://192.168.43.159:5000/uploads/file-1755401079243.jpg` },
+  { id: 5, name: 'Diwali Festival', date: '2025-10-21', image: `http://192.168.43.159:5000/uploads/file-1755401061152.webp` },
+  { id: 3, name: 'Govardhan Puja', date: '2025-11-02', image: `http://192.168.43.159:5000/uploads/file-1755148789161.jpg` },
 ];
 const galleryImages = [
-  { img: 'http://localhost:5000/uploads/file-1755401038882.jpg', title: 'Kirtan' },
-  { img: 'http://localhost:5000/uploads/file-1755401031113.jpeg', title: 'Deities' },
-  { img: 'http://localhost:5000/uploads/file-1755401017737.webp', title: 'Prasadam' },
-  { img: 'http://localhost:5000/uploads/file-1755400996370.webp', title: 'Festival' },
+  { img: `http://192.168.43.159:5000/uploads/file-1755401038882.jpg`, title: 'Kirtan' },
+  { img: `http://192.168.43.159:5000/uploads/file-1755401031113.jpeg`, title: 'Deities' },
+  { img: `http://192.168.43.159:5000/uploads/file-1755401017737.webp`, title: 'Prasadam' },
+  { img: `http://192.168.43.159:5000/uploads/file-1755400996370.webp`, title: 'Festival' },
 ];
 // --- End of Mock Data ---
 
@@ -97,7 +96,7 @@ const HomePage = () => {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Box component="img" src="http://localhost:5000/uploads/file-1755440367542.jpg" alt="Our Mission" sx={{ width: '100%', borderRadius: '8px', boxShadow: 3 }} />
+                <Box component="img" src={`http://192.168.43.159:5000/uploads/file-1755440367542.jpg`} alt="Our Mission" sx={{ width: '100%', borderRadius: '8px', boxShadow: 3 }} />
               </Grid>
             </Grid>
           </AnimatedSection>

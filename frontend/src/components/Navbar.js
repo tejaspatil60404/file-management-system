@@ -38,43 +38,43 @@ const Navbar = () => {
       <List>
         {navItems.map((item) => (
           <ListItem key={item.text} component={RouterLink} to={item.path} disablePadding>
-            <ListItemText primary={item.text} sx={{ textAlign: 'center' }} />
+            <ListItemText primary={item.text} sx={{ textAlign: 'center' }}/>
           </ListItem>
         ))}
         <Divider />
-        <ListItem component={RouterLink} to="/my-donations" disablePadding>
-          <ListItemText primary="Donate Now" sx={{ textAlign: 'center' }} />
-        </ListItem>
         <ListItem component={RouterLink} to="/donate" disablePadding>
-          <ListItemText primary="My Donations" sx={{ textAlign: 'center' }} />
+            <ListItemText primary="Donate Now" sx={{ textAlign: 'center', color: 'primary.main', fontWeight: 'bold' }}/>
         </ListItem>
         <Divider />
         {user ? (
-          <Box>
-            {(user.role === 'counsellor' || user.role === 'admin') && (
-              <ListItem component={RouterLink} to="/counsellor" disablePadding>
-                <ListItemText primary="Sadhana" sx={{ textAlign: 'center' }} />
-              </ListItem>
-            )}
-            {user.role === 'admin' && (
-              <ListItem component={RouterLink} to="/admin" disablePadding>
-                <ListItemText primary="Admin" sx={{ textAlign: 'center' }} />
-              </ListItem>
-            )}
-            <ListItem onClick={handleLogout} button>
-              <ListItemText primary="Logout" sx={{ textAlign: 'center' }} />
-            </ListItem>
-          </Box>
+            <Box>
+                {/* --- CORRECTED: Added "My Donations" link for logged-in users --- */}
+                <ListItem component={RouterLink} to="/my-donations" disablePadding>
+                    <ListItemText primary="My Donations" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+                {(user.role === 'counsellor' || user.role === 'admin') && (
+                    <ListItem component={RouterLink} to="/counsellor" disablePadding>
+                        <ListItemText primary="Sadhana" sx={{ textAlign: 'center' }}/>
+                    </ListItem>
+                )}
+                {user.role === 'admin' && (
+                    <ListItem component={RouterLink} to="/admin" disablePadding>
+                        <ListItemText primary="Admin" sx={{ textAlign: 'center' }}/>
+                    </ListItem>
+                )}
+                <ListItem onClick={handleLogout} button>
+                    <ListItemText primary="Logout" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+            </Box>
         ) : (
-          <Box>
-            <ListItem component={RouterLink} to="/login" disablePadding>
-              <ListItemText primary="Login" sx={{ textAlign: 'center' }} />
-            </ListItem>
-            <ListItem component={RouterLink} to="/register" disablePadding>
-              <ListItemText primary="Register" sx={{ textAlign: 'center' }} />
-            </ListItem>
-
-          </Box>
+            <Box>
+                <ListItem component={RouterLink} to="/login" disablePadding>
+                    <ListItemText primary="Login" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+                <ListItem component={RouterLink} to="/register" disablePadding>
+                    <ListItemText primary="Register" sx={{ textAlign: 'center' }}/>
+                </ListItem>
+            </Box>
         )}
       </List>
     </Box>
@@ -107,40 +107,45 @@ const Navbar = () => {
                 {item.text}
               </Button>
             ))}
-
-            {/* --- NEW DONATE BUTTON --- */}
-            <Button
-              component={RouterLink}
-              to="/donate"
-              color="white"
+            
+            <Button 
+              component={RouterLink} 
+              to="/donate" 
+              variant="outlined" 
+              sx={{ 
+                ml: 2, 
+                fontWeight: 'bold',
+                color: '#f0ad4e',
+                borderColor: '#f0ad4e',
+                '&:hover': {
+                    backgroundColor: 'rgba(240, 173, 78, 0.1)',
+                    borderColor: '#f0ad4e',
+                }
+              }}
             >
               Donate Now
             </Button>
-            <Button
-              component={RouterLink}
-              to="/my-donations"
-              color="white"
-            >
-              My Donations
-            </Button>
 
             {user ? (
-              <>
-                {(user.role === 'counsellor' || user.role === 'admin') && (
-                  <Button component={RouterLink} to="/counsellor" sx={{ color: '#fff' }}>Sadhana</Button>
-                )}
-                {user.role === 'admin' && (
-                  <Button component={RouterLink} to="/admin" sx={{ color: '#fff' }}>Admin</Button>
-                )}
-                <Button onClick={handleLogout} color="inherit">
-                  Logout
-                </Button>
-              </>
+                <>
+                    <Button component={RouterLink} to="/my-donations" sx={{ color: '#fff' }}>
+                        My Donations
+                    </Button>
+                    {(user.role === 'counsellor' || user.role === 'admin') && (
+                        <Button component={RouterLink} to="/counsellor" sx={{ color: '#fff' }}>Sadhana</Button>
+                    )}
+                    {user.role === 'admin' && (
+                        <Button component={RouterLink} to="/admin" sx={{ color: '#fff' }}>Admin</Button>
+                    )}
+                    <Button onClick={handleLogout} color="inherit">
+                        Logout
+                    </Button>
+                </>
             ) : (
-              <>
-                <Button component={RouterLink} to="/login" color="inherit">Login</Button>
-                <Button component={RouterLink} to="/register" color="inherit">Register</Button>
-              </>
+                <>
+                    <Button component={RouterLink} to="/login" color="inherit">Login</Button>
+                    <Button component={RouterLink} to="/register" color="inherit">Register</Button>
+                </>
             )}
           </Box>
         </Toolbar>
